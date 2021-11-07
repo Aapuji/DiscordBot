@@ -2,13 +2,14 @@ import os
 import re
 import discord
 import datetime
+from pytz import timezone
 from database import *;
 
 
 client = discord.Client()
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+# @client.event
+# async def on_ready():
+#     print('We have logged in as {0.user}'.format(client))
 
 iam_detector = re.compile("i(?:'?m| am) (.*?)(?:[.,!?]|$)",re.RegexFlag.IGNORECASE);
 async def iam_dad_cases(message:discord.message):
@@ -20,13 +21,10 @@ async def iam_dad_cases(message:discord.message):
 # use non leap year for february because people generally move it anyway.
 MONTH_MAX_DAYS = (0,31,28,31,30,31,30,31,31,30,31,30,31);
 
-
-
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return #yiff
-
     await iam_dad_cases(message)
     
     cmd_re = re.compile("!setBirthday (\d{1,2}/\d{1,2})(?:/(?:\d{2}){1,2})?");
@@ -40,21 +38,54 @@ async def on_message(message):
         elif day <= 0 or day > MONTH_MAX_DAYS[month]:
             await message.channel.send("Invalid day")
         else:
-            # TODO: record birthday
-            await message.channel.send("Month: "+str(month)+" Day: "+str(day))
-            db[str(message.author)] = str(month) + '/' + str(day)
             # Checks to see if there already exists an entry with this user
-            # message.author and db.prefix(message.author) are very diffrenet types and stuff, so they are converted to indentical strings.
-            
-            # if '(\'' + str(message.author) + '\',)' == str(db.prefix(message.author)):
-            #   await message.channel.send('Are you sure you want to change your birthday?')
-            # else:
-            #   db[str(message.author)] = str(month) + '/' + str(day)  
+            if str(message.author.id) in db.keys():
+              await message.channel.send('Are you sure you want to change your birthday? Type `!confirm` to change it.')
+              db[str(message.author.id)] = db[str(message.author.id)].split()[0] + ' ' + str(month) + '/' + str(day)
+            else:
+              # Record birthday
+              await message.channel.send("Month: "+str(month)+" Day: "+str(day))
+              db[message.author.id] = str(month) + '/' + str(day) + ' False'
     elif message.content.startswith('!setBirthday '):
         await message.channel.send("Command syntax error");
+    elif message.content.startswith('!confirm'):
+      if str(message.author.id) in listConfirms():
+        month = getMonth(str(message.author.id), 1)
+        day = getDay(str(message.author.id), 1)
+        await message.channel.send('<@' + str(message.author.id) + '> Birthday confirmed!\nMonth: ' + str(month) + ' Day: ' + str(day))
+        db[message.author.id] = str(month) + '/' + str(day) + ' False'
+
+      else:
+        await message.channel.send('You can only confirm a change if you requested one')      
+
+# Timezone (EST)
+tz = timezone('US/Eastern')
 
 # Date
-dt = datetime.datetime.now()
+dt = datetime.datetime.now(tz)
+
+# Checks if someone has a birthday this month
+watchUsers = []
+if str(dt.month) in listMonths():
+  for user in list(db.keys()):
+    if getMonth(user) == str(dt.month):
+      watchUsers.append(user)
+
+# Checks if someone's birthday is today
+@client.event
+async def on_ready():
+  print('We have logged in as {0.user}'.format(client))
+  if len(watchUsers) != 0 and str(dt.day) in listDays():
+    numBDays = []
+    for user in watchUsers:
+      if getDay(user) == str(dt.day):
+        numBDays.append(user)
+    for user in numBDays:
+      channel = client.get_channel(826984538164297769)
+      await channel.send('Happy Birthday <@' + user + '>!   🥳 🎉')
+
+# Debugging
+
 
 
 client.run(os.environ['BOT_TOKEN'])
