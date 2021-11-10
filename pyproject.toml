@@ -1,8 +1,24 @@
 [tool.poetry]
 name = "discordbot"
-version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+version = "1.1.0"
+description = "A discord bot that wishes you happy birthday!"
+authors = [
+  "Om Sharma <you@example.com>",
+  "Lior Carmelli <you@example.com>",
+  "Joseph Huber <you@example.com>",
+  "Theodosee Topaloff <you@example.com>",
+  "Venkadesh Eswaranandam <you@example.com>",
+  "Nicholas Belev <you@example.com>",
+  "Tomer Carmelli <you@example.com>",
+  # ETC
+]
+
+readme = "README.md"
+
+repository = "https://github.com/NHS-CS-Club/DiscordBot"
+homepage = "https://github.com/NHS-CS-Club/DiscordBot"
+
+keywords = ["discord"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
