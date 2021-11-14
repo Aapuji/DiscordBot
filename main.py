@@ -19,7 +19,9 @@ async def iam_dad_cases(message:discord.message):
         
 
 # use non leap year for february because people generally move it anyway.
-MONTH_MAX_DAYS = (0,31,28,31,30,31,30,31,31,30,31,30,31);
+MONTH_MAX_DAYS = (0,31,28,31,30,31,30,31,31,30,31,30,31)
+
+CONFIRM_CHANNEL_ID = 826984538164297769
 
 @client.event
 async def on_message(message):
@@ -81,11 +83,10 @@ async def on_ready():
       if getDay(user) == str(dt.day):
         numBDays.append(user)
     for user in numBDays:
-      channel = client.get_channel(826984538164297769)
+      channel = client.get_channel(CONFIRM_CHANNEL_ID)
       await channel.send('Happy Birthday <@' + user + '>!   🥳 🎉')
 
+
 # Debugging
-
-
 
 client.run(os.environ['BOT_TOKEN'])
