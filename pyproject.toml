@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "discordbot"
-version = "1.1.0"
+version = "1.1.1"
 description = "A discord bot that wishes you happy birthday!"
 authors = [
-  "Om Sharma <you@example.com>",
+  "Om Sharma <om.robotics16@gmail.com>",
   "Lior Carmelli <you@example.com>",
   "Joseph Huber <you@example.com>",
-  "Theodosee Topaloff <you@example.com>",
-  "Venkadesh Eswaranandam <you@example.com>",
+  "Theodosee Topaloff <thtopaloff@students.natickps.org>",
+  "Venkadesh Eswaranandam <veeswaranandam@students.natickps.org>",
   "Nicholas Belev <you@example.com>",
   "Tomer Carmelli <you@example.com>",
-  # ETC
+  ## ETC
 ]
 
 readme = "README.md"
