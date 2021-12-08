@@ -42,7 +42,7 @@ async def on_message(message):
         else:
             # Checks to see if there already exists an entry with this user
             if str(message.author.id) in db.keys():
-              await message.channel.send('Are you sure you want to change your birthday? Type `!confirm` to change it.')
+              await message.channel.send('Are you sure you want to change your birthday? Type `!confirm` to change it. Type `!cancel` to cancel.')
               db[str(message.author.id)] = db[str(message.author.id)].split()[0] + ' ' + str(month) + '/' + str(day)
             else:
               # Record birthday
@@ -56,9 +56,11 @@ async def on_message(message):
         day = getDay(str(message.author.id), 1)
         await message.channel.send('<@' + str(message.author.id) + '> Birthday confirmed!\nMonth: ' + str(month) + ' Day: ' + str(day))
         db[message.author.id] = str(month) + '/' + str(day) + ' False'
-
       else:
-        await message.channel.send('You can only confirm a change if you requested one')      
+        await message.channel.send('You can only confirm a change if you requested one')   
+    elif message.content.startswith('!cancel'):
+      if str(message.author.id) in listConfirms():
+        await message.channel.send(f'<@{str(message.author.id)}> Change Cancelled! Your birthday is still...\nMonth: {getMonth(str(message.author.id))} Day: {getDay(str(message.author.id))}')
 
 # Timezone (EST)
 tz = timezone('US/Eastern')
