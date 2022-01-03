@@ -3,7 +3,8 @@ import re
 import discord
 import datetime
 from pytz import timezone
-from database import *;
+from database import *
+from server import keep_alive
 
 
 client = discord.Client()
@@ -90,5 +91,8 @@ async def on_ready():
 
 
 # Debugging
+
+# Keep server alive
+keep_alive()
 
 client.run(os.environ['BOT_TOKEN'])
