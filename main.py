@@ -62,6 +62,8 @@ async def on_message(message):
     elif message.content.startswith('!cancel'):
       if str(message.author.id) in listConfirms():
         await message.channel.send(f'<@{str(message.author.id)}> Change Cancelled! Your birthday is still...\nMonth: {getMonth(str(message.author.id))} Day: {getDay(str(message.author.id))}')
+    elif message.content.startswith('!isUp'):
+      await message.channel.send('Yes, Birthday Bot is up and running!')
 
 # Timezone (EST)
 tz = timezone('US/Eastern')
