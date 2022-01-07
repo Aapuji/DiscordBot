@@ -6,20 +6,17 @@ from pytz import timezone
 from database import *
 from server import keep_alive
 
-
 client = discord.Client()
-# @client.event
-# async def on_ready():
-#     print('We have logged in as {0.user}'.format(client))
 
+"""
 iam_detector = re.compile("i(?:'?m| am) (.*?)(?:[.,!?]|$)",re.RegexFlag.IGNORECASE);
 async def iam_dad_cases(message:discord.message):
     iam_match = iam_detector.match(message.content);
     if iam_match != None:
         await message.channel.send("Hi "+iam_match.group(1)+", I am dad.");
-        
+"""   
 
-# use non leap year for february because people generally move it anyway.
+# Use non leap year for February because people generally move it anyway.
 MONTH_MAX_DAYS = (0,31,28,31,30,31,30,31,31,30,31,30,31)
 
 CONFIRM_CHANNEL_ID = 826984538164297769
@@ -28,7 +25,7 @@ CONFIRM_CHANNEL_ID = 826984538164297769
 async def on_message(message):
     if message.author == client.user:
         return #yiff
-    await iam_dad_cases(message)
+    # await iam_dad_cases(message)
     
     cmd_re = re.compile("!setBirthday (\d{1,2}/\d{1,2})(?:/(?:\d{2}){1,2})?");
     cmd_match = cmd_re.match(message.content);
@@ -44,11 +41,11 @@ async def on_message(message):
             # Checks to see if there already exists an entry with this user
             if str(message.author.id) in db.keys():
               await message.channel.send('Are you sure you want to change your birthday? Type `!confirm` to change it. Type `!cancel` to cancel.')
-              db[str(message.author.id)] = db[str(message.author.id)].split()[0] + ' ' + str(month) + '/' + str(day)
+              db[str(message.author.id)] = db[str(message.author.id)].split()[0] + ' ' + str(month) + '/' + str(day) + ' 0'
             else:
               # Record birthday
               await message.channel.send("Month: "+str(month)+" Day: "+str(day))
-              db[message.author.id] = str(month) + '/' + str(day) + ' False'
+              db[message.author.id] = str(month) + '/' + str(day) + ' False 0'
     elif message.content.startswith('!setBirthday '):
         await message.channel.send("Command syntax error");
     elif message.content.startswith('!confirm'):
@@ -56,7 +53,7 @@ async def on_message(message):
         month = getMonth(str(message.author.id), 1)
         day = getDay(str(message.author.id), 1)
         await message.channel.send('<@' + str(message.author.id) + '> Birthday confirmed!\nMonth: ' + str(month) + ' Day: ' + str(day))
-        db[message.author.id] = str(month) + '/' + str(day) + ' False'
+        db[message.author.id] = str(month) + '/' + str(day) + ' False 0'
       else:
         await message.channel.send('You can only confirm a change if you requested one')   
     elif message.content.startswith('!cancel'):
@@ -84,12 +81,13 @@ async def on_ready():
   print('We have logged in as {0.user}'.format(client))
   if len(watchUsers) != 0 and str(dt.day) in listDays():
     numBDays = []
+    channel = client.get_channel(CONFIRM_CHANNEL_ID)
     for user in watchUsers:
       if getDay(user) == str(dt.day):
         numBDays.append(user)
     for user in numBDays:
-      channel = client.get_channel(CONFIRM_CHANNEL_ID)
-      await channel.send('Happy Birthday <@' + user + '>!   🥳 🎉')
+      if not int(hasBeenCongratulated(user)):      
+        await channel.send('Happy Birthday <@' + user + '>!   🥳 🎉')
 
 
 # Debugging
